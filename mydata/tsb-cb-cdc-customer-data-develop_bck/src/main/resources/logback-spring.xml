@@ -1,0 +1,29 @@
+<configuration>
+    <springProperty scope="context" name="springAppName" source="spring.application.name" defaultValue="tsb-cb-cdc-customer-write-topology"/>
+
+    <appender name="JSONConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.out</target>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp />
+                <pattern>
+                    <pattern>
+                        {
+                        "level": "%level",
+                        "hostname":"${HOSTNAME}",
+                        "service": "${springAppName}",
+                        "thread": "%thread{36}",
+                        "logger": "%logger{36}",
+                        "requestId": "%X{XRequestId:-}",
+                        "message": "%message"
+                        }
+                    </pattern>
+                </pattern>
+            </providers>
+        </encoder>
+    </appender>
+
+    <root level="${logging.level.root}">
+        <appender-ref ref="JSONConsoleAppender" />
+    </root>
+</configuration>

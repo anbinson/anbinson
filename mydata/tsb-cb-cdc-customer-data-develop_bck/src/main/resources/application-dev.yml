@@ -1,0 +1,46 @@
+spring.application.name: tsb-cb-cdc-customer-write-topology
+spring.kafka.bootstrap-servers: localhost:9092
+
+spring.cloud.stream:
+  function.definition: processTransactionsStream
+  # Kafka config
+  kafka.streams.binder:
+    applicationId: tsb-cb-cdc-customer-write-topology
+    configuration:
+      schema.registry.url: localhost:8081
+      default:
+        key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        value.serde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
+      security.protocol: PLAINTEXT
+      ssl-enabled: false
+    serdeError: logAndContinue
+
+  # topics
+  bindings:
+    processTransactionsStream-in-0.destination: "transactions-topic"
+
+  # schema registry config
+  schemaRegistryClient.endpoint: localhost:8081
+
+# Database
+spring.data.cassandra.keyspace: odsdb
+spring.data.cassandra.contact-points: localhost
+spring.data.cassandra.port: 9042
+spring.data.cassandra.username: root
+spring.data.cassandra.password: ""
+spring.data.cassandra.schema-action: NONE
+spring.data.cassandra.ssl: false
+
+# Monitoring
+spring.jmx.enabled: true
+management:
+  endpoints.jmx.exposure.include: "*"
+  endpoints.web.exposure.include: "*"
+  metrics.kafka.consumer.enabled: true
+  metrics.kafka.producer.enabled: true
+  server.port: 9092
+
+# Logging
+logging.level:
+  root: debug
+  com.tsb.cb: debug

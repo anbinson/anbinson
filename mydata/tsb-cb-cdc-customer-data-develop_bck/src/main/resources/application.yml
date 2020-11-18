@@ -1,0 +1,55 @@
+spring.application.name: tsb-cb-cdc-customer-write-topology
+spring.kafka.bootstrap-servers: ${KAFKA_URL}:${KAFKA_PORT}
+
+spring.cloud.stream:
+  function.definition: processUsersStream,processDevicesStream,processHmacsStream,processPe11CustomersStream
+  # Kafka config
+  kafka.streams.binder:
+    applicationId: tsb-cb-cdc-customer-write-topology
+    configuration:
+      schema.registry.url: ${SCHEMA_REGISTRY}
+      default:
+        key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        value.serde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
+      security.protocol: ${kafka.securityProtocol}
+      sasl.mechanism: ${kafka.saslMechanism}
+      sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${KAFKA_USER}" password="${KAFKA_PASSWORD}";
+      ssl.truststore.location:  ${KAFKA_TRUSTSTORE_LOCATION}
+      ssl.truststore.password: ${KAFKA_TRUSTSTORE_PASSWORD}
+      ssl.truststore.type: ${kafka.truststoreType}
+    serdeError: logAndContinue
+
+  # topics
+  bindings:
+    processUsersStream-in-0.destination: ${kafka.usersByUserIdInputTopic}
+    processDevicesStream-in-0.destination: ${kafka.deviceByDasUserTopic}
+    processHmacsStream-in-0.destination: ${kafka.cbCustomerWriteHmacRequestTopic}
+    processPe11CustomersStream-in-0.destination: ${kafka.pe11CustomerTopic}
+
+  # schema registry config
+  schemaRegistryClient.endpoint: ${SCHEMA_REGISTRY}
+
+# Database
+spring.data.cassandra.keyspace: ${SCYLLA_KEYSPACE}
+spring.data.cassandra.contact-points: ${SCYLLA_HOST}
+spring.data.cassandra.port: ${SCYLLA_PORT}
+spring.data.cassandra.username: ${SCYLLA_USERNAME}
+spring.data.cassandra.password: ${SCYLLA_PASSWORD}
+spring.data.cassandra.schema-action: NONE
+spring.data.cassandra.ssl: ${SCYLLA_SSL_ENABLED}
+scylla.ssl.truststore.location: ${SCYLLA_TRUSTSTORE_LOCATION}
+scylla.ssl.truststore.password: ${SCYLLA_TRUSTSTORE_PASSWORD}
+
+# Monitoring
+spring.jmx.enabled: true
+management:
+  endpoints.jmx.exposure.include: "*"
+  endpoints.web.exposure.include: "*"
+  metrics.kafka.consumer.enabled: true
+  metrics.kafka.producer.enabled: true
+  server.port: ${kafka.monitoringPort}
+
+# Logging
+logging.level:
+  root: ${cbRootLogLevel}
+  com.tsb.cb: ${cbLogLevel}

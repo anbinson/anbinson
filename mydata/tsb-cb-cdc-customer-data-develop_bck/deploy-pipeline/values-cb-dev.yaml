@@ -1,0 +1,18 @@
+replicaCount: 1
+
+image:
+  repository: ${ARTIFACTORY_URL}/${PROJECT}/${REPO_NAME}
+  pullPolicy: IfNotPresent
+  tag: ${BUILD_TIME}
+
+service:
+  enabled: true
+  type: ClusterIP
+  ports:
+  - name: web
+    port: 80
+    protocol: TCP
+    targetPort: 3000
+
+ingress:
+  enabled: false

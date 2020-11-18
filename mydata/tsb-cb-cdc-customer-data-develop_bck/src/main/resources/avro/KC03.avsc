@@ -1,0 +1,28 @@
+{
+   "type":"record",
+   "name":"KC03",
+   "namespace":"com.tsb.ods.stream.schema.avro.kc03",
+   "doc":"Schema to replicate transaction kc03 table",
+   "fields":[
+      {
+         "name":"trans_id",
+         "type":[
+            "null",
+            "string"
+         ],
+         "default": null
+      },
+      {
+         "name":"name",
+         "type":[
+            "null",
+            "string"
+         ],
+         "default": null
+      },
+      {
+         "name":"balance",
+         "type":"double"
+      }
+     ]  
+ }
